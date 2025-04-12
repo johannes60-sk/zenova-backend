@@ -1,0 +1,13 @@
+Users : Utilisateurs de l'application.
+
+Programs : Programmes créés par les utilisateurs, avec les informations de base comme le nom, la description, les dates, la visibilité, etc.
+
+ProgramSchedule : Planification des programmes avec les jours et les heures définis par l'utilisateur.
+
+ProgramExercises : Lien entre un programme et ses exercices, avec des informations spécifiques sur les sets.
+
+ExerciseSets : Détails des sets pour chaque exercice (répétitions, temps de repos, poids, etc.).
+
+ProgramVisibilityLogs : Journal pour tracer les changements de visibilité d'un programme.
+
+SetsTemplates : Modèles de sets réutilisables avec des paramètres préconfigurés pour faciliter la création d'exercices.

@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ExerciseCategory {
+  id            Int                   @id @default(autoincrement())
+  name          String                @unique
+  subCategories ExerciseSubCategory[] @relation("CategorySubCategories")
+  exercices     Exercise[]            @relation("CategoryExercises")
+}
+
+model ExerciseSubCategory {
+  id         Int               @id @default(autoincrement())
+  name       String            @unique
+  category   ExerciseCategory  @relation(fields: [categoryId], references: [id], name: "CategorySubCategories")
+  categoryId Int
+  exercises  Exercise[]        @relation("SubCategoryExercises")
+}
+
+model Exercise {
+  id               Int                  @id @default(autoincrement())
+  name             String
+  description      String?
+  image            String
+  target           String
+  bodyPart         String
+  category         ExerciseCategory     @relation(fields: [categoryId], references: [id], name: "CategoryExercises")
+  categoryId       Int
+  subCategory      ExerciseSubCategory  @relation(fields: [subCategoryId], references: [id], name: "SubCategoryExercises")
+  subCategoryId    Int
+  programExercises ProgramExercises[]   @relation("ProgramToExercise")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  programs  Program[] @relation("UserPrograms")
+}
+
+model Program {
+  id               String                  @id @default(cuid())
+  userId           String
+  user             User                    @relation(fields: [userId], references: [id], name: "UserPrograms")
+
+  name             String
+  description      String
+  imageUrl         String?
+  isPublic         Boolean                 @default(false)
+  notification     Boolean                 @default(false)
+
+  programSchedule  ProgramSchedule[]
+  programExercises ProgramExercises[]
+  visibilityLogs   ProgramVisibilityLogs[]
+
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+}
+
+model ProgramExercises {
+  id          String    @id @default(cuid())
+  program     Program   @relation(fields: [programId], references: [id])
+  programId   String
+  exercise    Exercise  @relation(name: "ProgramToExercise", fields: [exerciseId], references: [id])
+  exerciseId  Int
+  order       Int
+  setsConfig  Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  exerciseSets ExerciseSets[] @relation("ProgramExerciseToSets")
+}
+
+model ProgramSchedule {
+  id         String   @id @default(uuid())
+  program    Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  programId  String
+  dayOfWeek  WeekDay
+  time       String   // Format "HH:mm", ex: "18:30"
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+enum WeekDay {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+model ExerciseSets {
+  id                 String            @id @default(cuid())
+   programExercise   ProgramExercises @relation("ProgramExerciseToSets", fields: [programExerciseId], references: [id])
+  programExerciseId  String
+  repetitions        Int
+  time               Int?              // Temps par set, si applicable (en secondes)
+  rest               Int?              // Temps de repos par set (en secondes)
+  weight             Float?            // Poids utilisé dans l'exercice
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model ProgramVisibilityLogs {
+  id          String    @id @default(cuid())
+  program     Program   @relation(fields: [programId], references: [id])
+  programId   String
+  visibility  VisibilityEnum
+  changedAt   DateTime  @default(now())
+}
+
+enum VisibilityEnum {
+  PRIVATE
+  PUBLIC
+}
+
+model SetsTemplates {
+  id          String   @id @default(cuid())
+  name        String
+  repetitions Int
+  rest        Int      // Temps de repos en secondes
+  weight      Int?     // Poids, optionnel si nécessaire
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
