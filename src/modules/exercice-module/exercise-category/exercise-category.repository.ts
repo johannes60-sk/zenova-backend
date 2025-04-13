@@ -1,7 +1,7 @@
 // exercise-category.repository.ts
 import { Injectable } from '@nestjs/common';
 import { CreateExerciseCategoryDto } from './dto/create-exercise-category.dto';
-import { PrismaService } from '../prisma-module/prisma.service';
+import { PrismaService } from '../../prisma-module/prisma.service';
 
 @Injectable()
 export class ExerciseCategoryRepository {

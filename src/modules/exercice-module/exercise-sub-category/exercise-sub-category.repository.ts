@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma-module/prisma.service';
 import { CreateExerciseSubCategoryDto } from './dto/exercise-sub-category.dto';
+import { PrismaService } from 'src/modules/prisma-module/prisma.service';
 
 @Injectable()
 export class ExerciseSubCategoryRepository {
